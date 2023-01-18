@@ -1,0 +1,5 @@
+*.swp
+*.pyc
+
+meta/venv
+.pytest_cache/
