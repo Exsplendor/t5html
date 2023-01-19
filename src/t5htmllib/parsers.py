@@ -37,13 +37,57 @@ def separate_element_from_attributes(line):
     return element, attributes
 
 
-def split_attributes(attribute_str):
+def tuples_from_raw_attribute_str(attribute_str):
     """
     takes a string of attributes and 
-    returns a list of attributes
+    returns a list of attribute-tuples
     """
-    return attribute_str.split()
+    # There are three possible 'words':
+    #   1. standalone attributes (aka bool. attr), 2a. simple assignments (key=value), 
+    #   2b. text assignments (key="quoted longer text")
+
+    words = attribute_str.split()
+    next_word_belongs_to_last_value = False
+    attributes = []
+
+    for word in words:
+
+        if next_word_belongs_to_last_value:
+            # remove last (key, value) pair and add current word to value
+            # reappend and continue
+            (key, value) = attributes.pop()
+
+            # if current word ends with `"`, then we reached the last word
+            next_word_belongs_to_last_value = not word.endswith('"')
+            word.strip('"')
+            value = ''.join(word)
+            attr = (key, value)
+            
+            attributes.append(attr)
+            continue
+
+        is_assignment = '=' in word
+        if is_assignment:
+            key, value = word.split('=')
+            next_word_belongs_to_last_value = value.startswith('"')
+            attr = key, value.strip('"')
+        else:
+            # boolean attribute
+            attr = (None, word)
+
+        attributes.append(attr)
+
+    return attributes
 
 
-# vi: set et ts=4 ts=4 ai cc=78 :
+def string_from_attribute_tuples(attrlst):
+    """
+    takes a list of attribute tuples (key, value) or (None, boolean-attr) and
+    returns a string
 
+    """
+    reformated = [f'{key}="{value}"' if key else f'{value}' for (key, value) in attrlst]
+    return ' '.join(reformated)
+
+
+# vi: set et ts=4 ts=4 ai cc=78 rnu so=5 nuw=4:
