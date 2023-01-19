@@ -29,17 +29,36 @@ As a CLI Application you have:
     4. Anything else:
         belongs in meta, because it probably serves developer convenience and
         doesn't affect the user (aka non-developer).
+
         Test-Question: If <something> in meta is lost, does the code still run? 
 
 
 ## Build-System
 
-Using `hatchling`, as seemingly preferred by the *Python Packaging Authority*.
-`make build` should normally do the trick, which calls`python -m build` to 
-resolve the build-tool-chain dependencies.
+We use `hatchling` as it seems to be preferred by the *Python Packaging Authority*.
+
+You can build a package either with a Makefile rule
+
+    `make build`
+
+or manually by invoking:
+
+    `python -m build`.
+
+### Build-Config
+
+We use `pyproject.toml` as our central build and config-file.
 
 
+### Minimal Build Requirements
 
-
+Package         Version
+--------------- -------
+build           0.10.0
+packaging       23.0
+pip             22.0.2
+pyproject_hooks 1.0.0
+setuptools      59.6.0
+tomli           2.0.1
 
 [//]: vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en:
