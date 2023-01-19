@@ -22,7 +22,7 @@ MAKEFLAGS += --no-builtin-rules
 
 TITLE := t5html
 AUTHOR := splendor
-EMAIL := <em.notorp@sirolf.rodnelps>
+EMAIL := em.notorp@sirolf.rodnelps
 VERSION := $(shell date +%y.%m.%d)
 DESC := "Converts text to html. Text muste be in t5html form."
 CVSURL := ""
@@ -32,29 +32,38 @@ define HELP
 
 ## ${TITLE} Makefile ##
 
-There's no default target.
-
 Usage:
+
     make
+        shows this help, same as 'make help'
+
     make init
         create initial projecct structure
-    make help
+
+    make initvenv
+        (re)create virtualenv
+
+    make build
+        calls the build-frontend, e.g.: `python -m build`
+
+    make dist-clean
+        removes the build-directory
 
 endef
 
-define SETUPCFG
+define PYPROJECT_TOML
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
-name = ${TITLE}
-version = ${VERSION}
+name = "${TITLE}"
+version = "${VERSION}"
 authors = [
-  { name=${AUTHOR}, email=${EMAIL} },
+  { name="${AUTHOR}", email="${EMAIL}" },
 ]
-description = "${DESC}"
-readme = "Read.Me"
+description = ${DESC}
+readme = "doc/ReadMe.md"
 requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -65,9 +74,8 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "${CVSURL}"
-"Bug Tracker" = "${CVSURL}/issues"
-
+#"Homepage" = ${CVSURL}
+#"Bug Tracker" = ${CVSURL}/issues
 endef
 
 
@@ -83,7 +91,7 @@ CVS_IGNORE := .${CVS}ignore
 
 ## ..................................................................... Targets
 
-.PHONY: init clean install uninstall help
+.PHONY: init clean dist-clean install uninstall help
 
 help: export _HELP_TEXT:=$(HELP)
 help:
@@ -101,15 +109,28 @@ initdirs:
 initvenv:
 > @${PYTHON} -m ${VENV} ${VENVDIR}
 > @echo "Activate your virtual-environment by sourcing: source ${VENVSTART}"
-> @echo "Done ($@)."
 
 .PHONY:
 initgit: ${CVS_IGNORE}
-> @echo "Done ($@)."
 
 ${CVS_IGNORE}:
 > @echo -e "*.swp\n*.pyc\n\n${VENVDIR}\n\n.tox\n.pytest_cache\n" >> $@
-> @echo "Done ($@)."
+
+.PHONY:
+build: initbuild
+> ${PYTHON} -m build
+
+.PHONY:
+initbuild: pyproject.toml
+> pip install --require-virtualenv build
+
+pyproject.toml: export _CFGFILE:=${PYPROJECT_TOML}
+pyproject.toml:
+> @echo "$${_CFGFILE}" > $@
+
+
+dist-clean:
+> @rm -rf dist .pytest_cache
 
 
 clean:
