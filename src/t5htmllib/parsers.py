@@ -4,11 +4,11 @@ _D = logging.debug
 
 def parse_element(line):
     """
-    takes a line
+    takes a raw-line and
+    returns a formatted line 
     """
     element, attributes = separate_element_from_attributes(line)
     tag, _id, _cls = separate_element_from_id_and_class(element)
-
 
     reformated = "%s %s %s" %(tag, _id, attributes)
     normalized = reformated.strip()
@@ -35,6 +35,14 @@ def separate_element_from_attributes(line):
     """
     element, attributes = line.split(' ', 1) if ' ' in line else (line, '')
     return element, attributes
+
+
+def split_attributes(attribute_str):
+    """
+    takes a string of attributes and 
+    returns a list of attributes
+    """
+    return attribute_str.split()
 
 
 # vi: set et ts=4 ts=4 ai cc=78 :
