@@ -22,3 +22,7 @@ classifiers = [
 [project.urls]
 #"Homepage" = ""
 #"Bug Tracker" = ""/issues
+
+
+[tool.pytest.ini_options]
+pythonpath = [ "src", ]

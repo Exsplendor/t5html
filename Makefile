@@ -76,6 +76,10 @@ classifiers = [
 [project.urls]
 #"Homepage" = ${CVSURL}
 #"Bug Tracker" = ${CVSURL}/issues
+
+
+[tool.pytest.ini_options]
+pythonpath = [ "src", ]
 endef
 
 
