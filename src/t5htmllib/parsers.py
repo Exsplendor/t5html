@@ -8,9 +8,9 @@ def parse_element(line):
     returns a formatted line 
     """
     element, attributes = separate_element_from_attributes(line)
-    tag, _id, _cls = separate_element_from_id_and_class(element)
+    es = separate_element_from_id_and_class(element)
 
-    reformated = "%s %s %s" %(tag, _id, attributes)
+    reformated = stringify_ElementStructure(es)
     normalized = reformated.strip()
 
     return normalized
@@ -53,14 +53,14 @@ def tuples_from_raw_attribute_str(attribute_str):
     for word in words:
 
         if next_word_belongs_to_last_value:
-            # remove last (key, value) pair and add current word to value
-            # reappend and continue
-            (key, value) = attributes.pop()
 
-            # if current word ends with `"`, then we reached the last word
-            next_word_belongs_to_last_value = not word.endswith('"')
-            word.strip('"')
-            value = ''.join(word)
+            # remove last (key, value) pair and add current word to value
+            # reappend and get next word
+            
+            (key, value) = attributes.pop()
+            if word.endswith('"'):
+                next_word_belongs_to_last_value = False
+            value += ' ' + word.strip('"')
             attr = (key, value)
             
             attributes.append(attr)
@@ -69,7 +69,8 @@ def tuples_from_raw_attribute_str(attribute_str):
         is_assignment = '=' in word
         if is_assignment:
             key, value = word.split('=')
-            next_word_belongs_to_last_value = value.startswith('"')
+            if value.startswith('"') and not value.endswith('"'):
+                next_word_belongs_to_last_value = True
             attr = key, value.strip('"')
         else:
             # boolean attribute
@@ -80,7 +81,7 @@ def tuples_from_raw_attribute_str(attribute_str):
     return attributes
 
 
-def string_from_attribute_tuples(attrlst):
+def stringify_AttributeStructure(attrlst):
     """
     takes a list of attribute tuples (key, value) or (None, boolean-attr) and
     returns a string
@@ -88,6 +89,15 @@ def string_from_attribute_tuples(attrlst):
     """
     reformated = [f'{key}="{value}"' if key else f'{value}' for (key, value) in attrlst]
     return ' '.join(reformated)
+
+
+def stringify_ElementStructure(es):
+    """
+    takes a element tuple (tag, id, [classes]) and
+    returns a string
+    """
+    (tag, _id, classes) = es
+    return f'{tag} id={_id} class="{" ".join(classes)}"' 
 
 
 # vi: set et ts=4 ts=4 ai cc=78 rnu so=5 nuw=4:

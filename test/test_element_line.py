@@ -89,7 +89,7 @@ class Test_String_From_Attribute_Tuples:
     """
     Check for normal attribute-str to list conversion.
     """
-    f = staticmethod(string_from_attribute_tuples)
+    f = staticmethod(stringify_AttributeStructure)
     def test_string_from_attribute_tuples(s):
         assert s.f([('attr', 'Some text')]) == 'attr="Some text"'
 
@@ -105,34 +105,32 @@ class Test_String_From_Attribute_Tuples:
         assert s.f(_in) == _out
 
 
-@pytest.mark.skip('Marked for deletion. kept for teststrings atm')
-def test_separate_element_from_attributes():
-    """ expects (element, attributes)
+class TestComplexAttributeExtraction:
     """
-    lines = [
-        'tag',
-        'tag#id',
-        'tag.cls',
-        'tag#id.cls',
-        'tag#id.cls',
-        'tag#id.cls.dls.els',
-        'tag attr',
-        'tag attr=value',
-        'tag#id.cls.dls.els attr attr=ab attr=abc def attr=last',
-        ]
-    results = [
-        ('tag', ''),
-        ('tag#id', ''),
-        ('tag.cls', ''),
-        ('tag#id.cls', ''),
-        ('tag#id.cls', ''),
-        ('tag#id.cls.dls.els', ''),
-        ('tag', 'attr'),
-        ('tag', 'attr=value'),
-        ('tag#id.cls.dls.els', 'attr attr=ab attr=abc def attr=last'),
-        ]
-    for input, output in zip(lines, results):
-        assert separate_element_from_attributes(input) == output
+    check for both attribute and tag extraction
+    """
+    def test_long_element(s):
+        _in = 'tag#id.cls.dls.els attr attr=ab attr="abc def" attr=last'
+        _out = 'attr attr="ab" attr="abc def" attr="last"'
+        ele, attrs = separate_element_from_attributes(_in)
+        tpls = tuples_from_raw_attribute_str(attrs)
+        assert stringify_AttributeStructure(tpls) == _out
+        _out = ('tag', 'id', ['cls', 'dls', 'els'])
+        assert separate_element_from_id_and_class(ele) == _out
 
+
+class TestStringifyElementTuple:
+    """
+    tag head to string
+    """
+    f = staticmethod(separate_element_from_id_and_class)
+    def test_long_element(s):
+        _in = s.f('tag#id.cls.dls.els')
+        _out = 'tag id=id class="cls dls els"'
+        assert stringify_ElementStructure(_in) == _out
+
+
+class TestReformatElementLine:
+    pass
 
 # vi: set et ts=4 ts=4 ai cc=78 nowrap nu so=5:
