@@ -1,6 +1,17 @@
-import logging
-logging.basicConfig(filename='parsers.debug.log', level=logging.DEBUG)
-_D = logging.debug
+""" 
+ElementParser
+
+Contains the functions to process t5html formatted element-lines aka tags.
+
+Example:
+    
+    parse_element('section#overview.blog-content.top-entry breaking')
+    
+    returns:
+
+        '<section id="overview" class="blog-content top-entry" breaking>'
+
+"""
 
 def parse_element(line):
     """
@@ -8,24 +19,14 @@ def parse_element(line):
     returns a formatted line 
     """
     element, attributes = separate_element_from_attributes(line)
-    es = separate_element_from_id_and_class(element)
+    _es = elementStructure_fromString(element)
+    _as = attributesStructure_fromString(attributes)
 
-    reformated = stringify_ElementStructure(es)
-    normalized = reformated.strip()
+    element_head = stringify_ElementStructure(_es)
+    element_attributes = stringify_AttributeStructure(_as)
 
-    return normalized
-
-
-def separate_element_from_id_and_class(element):
-    """
-    tales an element (e.g.: 'ele#id.cls.cls.cls') and
-    returns a (element, id, [class,]) tuple
-    """
-    classes = [c for c in element.split('.') if '.' in element]
-    element_id = classes.pop(0) if classes else element
-    element, _id = element_id.split('#') if '#' in element_id else (element_id, '')
-
-    return element, _id, classes
+    reformatted = f'<{element_head} {element_attributes}>'
+    return reformatted
 
 
 def separate_element_from_attributes(line):
@@ -37,7 +38,19 @@ def separate_element_from_attributes(line):
     return element, attributes
 
 
-def tuples_from_raw_attribute_str(attribute_str):
+def elementStructure_fromString(element):
+    """
+    tales an element (e.g.: 'ele#id.cls.cls.cls') and
+    returns a (element, id, [class,]) tuple
+    """
+    classes = [c for c in element.split('.') if '.' in element]
+    element_id = classes.pop(0) if classes else element
+    element, _id = element_id.split('#') if '#' in element_id else (element_id, '')
+
+    return element, _id, classes
+
+
+def attributesStructure_fromString(attribute_str):
     """
     takes a string of attributes and 
     returns a list of attribute-tuples
@@ -97,7 +110,11 @@ def stringify_ElementStructure(es):
     returns a string
     """
     (tag, _id, classes) = es
-    return f'{tag} id={_id} class="{" ".join(classes)}"' 
+    return f'{tag} id="{_id}" class="{" ".join(classes)}"' 
+
+
+if __name__ == '__main__':
+    print("This file is meant to be imported, not to be executed.")
 
 
 # vi: set et ts=4 ts=4 ai cc=78 rnu so=5 nuw=4:
