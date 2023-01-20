@@ -1,6 +1,6 @@
 import pytest
 
-from t5htmllib.parsers import *
+from t5htmllib.elementparser import *
 
 
 class Test_Element_Attr_Separation:
@@ -32,7 +32,7 @@ class Test_Element_Id_Class_Separation:
     """
     Check if there are besides the tag additional id and class attributes.
     """
-    f = staticmethod(separate_element_from_id_and_class)
+    f = staticmethod(elementStructure_fromString)
     def test_element(s):
         assert s.f('ele') == ('ele', '', [])
 
@@ -56,7 +56,7 @@ class Test_Attribute_Conversion:
     """
     Check for normal attribute-str to list conversion.
     """
-    f = staticmethod(tuples_from_raw_attribute_str)
+    f = staticmethod(attributesStructure_fromString)
     def test_attr(s):
         assert s.f('attr') == [(None, 'attr')]
     
@@ -113,24 +113,27 @@ class TestComplexAttributeExtraction:
         _in = 'tag#id.cls.dls.els attr attr=ab attr="abc def" attr=last'
         _out = 'attr attr="ab" attr="abc def" attr="last"'
         ele, attrs = separate_element_from_attributes(_in)
-        tpls = tuples_from_raw_attribute_str(attrs)
+        tpls = attributesStructure_fromString(attrs)
         assert stringify_AttributeStructure(tpls) == _out
         _out = ('tag', 'id', ['cls', 'dls', 'els'])
-        assert separate_element_from_id_and_class(ele) == _out
+        assert elementStructure_fromString(ele) == _out
 
 
 class TestStringifyElementTuple:
     """
     tag head to string
     """
-    f = staticmethod(separate_element_from_id_and_class)
+    f = staticmethod(elementStructure_fromString)
     def test_long_element(s):
         _in = s.f('tag#id.cls.dls.els')
-        _out = 'tag id=id class="cls dls els"'
+        _out = 'tag id="id" class="cls dls els"'
         assert stringify_ElementStructure(_in) == _out
 
 
 class TestReformatElementLine:
-    pass
+    def test_parse_element(s):
+        _in = 'div#myid.cls.cls attr1=value'
+        _out = '<div id="myid" class="cls cls" attr1="value">'
+        assert parse_element(_in) == _out
 
 # vi: set et ts=4 ts=4 ai cc=78 nowrap nu so=5:
