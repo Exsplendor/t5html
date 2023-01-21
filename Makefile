@@ -122,10 +122,12 @@ ${CVS_IGNORE}:
 
 .PHONY:
 build: initbuild
+> pip -V | grep ${VENV} || source ${VENVSTART}
 > ${PYTHON} -m build
 
 .PHONY:
 initbuild: pyproject.toml
+> pip -V | grep ${VENV} || source ${VENVSTART}
 > pip install --require-virtualenv build
 
 pyproject.toml: export _CFGFILE:=${PYPROJECT_TOML}

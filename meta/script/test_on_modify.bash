@@ -1,15 +1,15 @@
 #!/usr/bin/bash
 HELP="
-Executes in a continues loop pytest
+Executes pytest every time a change in src/ or test/ directories occur.
 
 USAGE:
 
     $0
 
 
-an alternative is the test_on_modify.bash script.
+an alternative is the watchtests.bash script.
 "
-SCRIPT_NEEDS=(bash watch pytest)
+SCRIPT_NEEDS=(bash inotifywait pytest)
 
 
 # Scripting Helpers
@@ -28,6 +28,10 @@ _trycmd()  { which $1 >/dev/null 2>&1; }
         && _abort "Failed to check due to missing programs: $PLEASE_INSTALL" 
 
 ## restart pytest every 5 seconds
-    watch -n5 pytest
+    while inotifywait -r -e modify test/ src/
+    do
+        clear
+        pytest
+    done
 # vi: et sw=4 ts=4 list
 
