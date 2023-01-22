@@ -65,7 +65,7 @@ def classify_line(line):
 
     # has to be a double-classifier
     if l.startswith('..'): return "continue"
-    if ':=' in l and l.split(':=', 1)[0].isupper():
+    if ' := ' in l and l.split(' := ', 1)[0].isupper():
         return 'macro'
 
     return "normal"

@@ -4,3 +4,5 @@
 meta/venv
 .pytest_cache/
 dist/
+
+notes.txt

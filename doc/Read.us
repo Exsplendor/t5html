@@ -28,7 +28,7 @@ html
         METADESC content=example for t5html
     body
 
-## vi: set et ai ts=3 sw=3 ft=t6html :
+## vi: set et ai ts=3 sw=3 ft=t5html :
 ```
 
 

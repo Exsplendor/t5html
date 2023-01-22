@@ -139,6 +139,10 @@ dist-clean:
 > @rm -rf dist .pytest_cache
 
 
+publish:
+> twine upload --repository testpypi dist/t5html*
+
+
 clean:
 > @echo "TARGET UNIMPLEMENTED"
 
