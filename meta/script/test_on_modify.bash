@@ -28,7 +28,7 @@ _trycmd()  { which $1 >/dev/null 2>&1; }
         && _abort "Failed to check due to missing programs: $PLEASE_INSTALL" 
 
 ## restart pytest every 5 seconds
-    while inotifywait -r -e modify test/ src/
+    while inotifywait -q -r -e modify test/ src/
     do
         clear
         pytest

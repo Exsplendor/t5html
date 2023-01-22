@@ -56,15 +56,23 @@ def classify_line(line):
     """
     l = line.strip()
     # single classifier allowed:
+    if l == '': return 'blank'
+
     if l.startswith('#'): return "comment"
     if l.startswith('!'): return "verbatim"
     if l.startswith('@'): return "import"
+    if l.startswith('"'): return "text"
 
     # has to be a double-classifier
     if l.startswith('..'): return "continue"
+    if ':=' in l and l.split(':=', 1)[0].isupper():
+        return 'macro'
 
     return "normal"
 
+def remove_lines(lines):
+    """
+    """
 
 
 if __name__ == '__main__':
