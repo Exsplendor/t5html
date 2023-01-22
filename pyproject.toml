@@ -4,9 +4,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "t5html"
-version = "23.01.18"
+version = "23.01.19"
 authors = [
-  { name="splendor", email="em.notorp@sirolf.rodnelps" },
+  { name="splendor", email="splendor@tuta.io" },
 ]
 description = "Converts text to html. Text muste be in t5html form."
 readme = "doc/ReadMe.md"

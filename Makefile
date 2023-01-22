@@ -47,7 +47,10 @@ Usage:
         calls the build-frontend, e.g.: `python -m build`
 
     make dist-clean
-        removes the build-directory
+        removes the build-directory (normally: dist)
+
+    make publish
+        uploads the build into pypi (test-pypi atm)
 
 endef
 
@@ -83,6 +86,8 @@ pythonpath = [ "src", ]
 endef
 
 
+## ........................................................... Build Environment
+
 PYTHON := python3
 
 VENV := venv
@@ -95,7 +100,6 @@ CVS_IGNORE := .${CVS}ignore
 
 ## ..................................................................... Targets
 
-.PHONY: init clean dist-clean install uninstall help
 
 help: export _HELP_TEXT:=$(HELP)
 help:
@@ -105,27 +109,22 @@ help:
 init: initdirs initvenv init${CVS}
 > @echo "Done ($@)"
 
-.PHONY:
 initdirs:
 > @mkdir -p ./{doc,src,test,meta/script}
 
-.PHONY:
 initvenv:
 > @${PYTHON} -m ${VENV} ${VENVDIR}
 > @echo "Activate your virtual-environment by sourcing: source ${VENVSTART}"
 
-.PHONY:
 initgit: ${CVS_IGNORE}
 
 ${CVS_IGNORE}:
 > @echo -e "*.swp\n*.pyc\n\n${VENVDIR}\n\n.tox\n.pytest_cache\n" >> $@
 
-.PHONY:
 build: initbuild
 > pip -V | grep ${VENV} || source ${VENVSTART}
 > ${PYTHON} -m build
 
-.PHONY:
 initbuild: pyproject.toml
 > pip -V | grep ${VENV} || source ${VENVSTART}
 > pip install --require-virtualenv build
@@ -139,20 +138,8 @@ dist-clean:
 > @rm -rf dist .pytest_cache
 
 
-publish:
+publish: build
 > twine upload --repository testpypi dist/t5html*
-
-
-clean:
-> @echo "TARGET UNIMPLEMENTED"
-
-
-install:
-> @echo "TARGET UNIMPLEMENTED"
-
-
-uninstall:
-> @echo "TARGET UNIMPLEMENTED"
 
 
 # vi: et sw=4 ts=4 list
