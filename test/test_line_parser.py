@@ -15,8 +15,8 @@ class TestLineClassifiers:
     def test_classify_verbatim_line(s):
         assert classify_line('!! <!- html comment -->') == "verbatim"
         
-    def test_classify_normal_line(s):
-        assert classify_line('      div#gallery.blog') == "normal"
+    def test_classify_element_line(s):
+        assert classify_line('      div#gallery.blog') == "element"
 
     def test_classify_import_line(s):
         assert classify_line('@ path/to/file') == "import"
@@ -66,7 +66,7 @@ class TestLineParsing:
 
     def test_classify_lines(s):
         b, c, n, m, v, i, cc, t =\
-        "blank comment normal macro verbatim import continue text".split()
+        "blank comment element macro verbatim import continue text".split()
         manual = enumerate([b,c,b,m,v,i,b,*(n,)*8,t,cc,n,n])
         auto = enumerate(map(classify_line, s._html.splitlines()))
         assert list(auto) == list(manual)
@@ -77,20 +77,20 @@ class TestLineParsing:
         assert rls[-1] == (18, ' '*9+'section')
 
     def test_classifed_LineStructure(s):
-        cls = ClassifiedLines_from_RawLines(
+        cls = LineStructures_from_RawLines(
                 RawLines_from_str(s._html))
         assert cls[1] == (1, '# t5html', 'comment')
-        assert cls[-1] == (18, ' '*9+'section', 'normal')
+        assert cls[-1] == (18, ' '*9+'section', 'element')
 
     def test_sanitized_cls(s):
-        scls = sanitized_ClassifiedLines(
-                ClassifiedLines_from_RawLines(
+        scls = sanitized_LineStructures(
+                LineStructures_from_RawLines(
                     RawLines_from_str(s._html)))
         assert scls[0] == (3, 'HTML5 := <!DOCTYPE html>', 'macro')
         assert scls[1] == (4, '!! HTML5', 'verbatim')
         assert scls[2] == (5, '@@ file from src', 'import')
         assert scls[-3] == (16, ' '*12+'.. over multiple line', 'continue')
-        assert scls[-1] == (18, ' '*9+'section', 'normal')
+        assert scls[-1] == (18, ' '*9+'section', 'element')
 
     
 class TestSanitizedLineParsing:
@@ -116,9 +116,9 @@ class TestSanitizedLineParsing:
     """
     def setup_class(c):
         c._html = dedent(c.__doc__)
-        c._scls = sanitized_ClassifiedLines(
-                ClassifiedLines_from_RawLines(
-                    RawLines_from_str(c._html)))
+        c._scls = sanitized_LineStructures(
+                    LineStructures_from_RawLines(
+                        RawLines_from_str(c._html)))
 
     def test_extract_macros(s):
         macros, cls = split_macros(s._scls)
@@ -126,18 +126,46 @@ class TestSanitizedLineParsing:
         assert (4, '!! HTML5', 'verbatim') in cls
         assert (5, '@@ file from src', 'import') in cls
 
-
     def test_extract_imports(s):
         imports, cls = split_imports(s._scls)
         assert imports == [(5, '@@ file from src', 'import')]
         assert (3, 'HTML5 := <!DOCTYPE html>', 'macro') in cls
         assert (4, '!! HTML5', 'verbatim') in cls
 
-
     def test_macrodef_from_LineStructure(s):
         macros, cls = split_macros(s._scls)
-        assert MacroDef_from_ClassifiedLines(macros) == {'HTML5' : '<!DOCTYPE html>'}
+        assert MacroDef_from_LineStructures(macros) == {'HTML5' : '<!DOCTYPE html>'}
+
+    def test_expand_macro(s):
+        macros, cls = split_macros(s._scls)
+        macrodef = MacroDef_from_LineStructures(macros)
+        assert '!! <!DOCTYPE html>' in [tpl.line for tpl in expand_macros(cls, macrodef)]
+
+    def test_fold_lines(s):
+        lines = content_from_ls(s._scls)
+
+    def test_concatenate_lines_lessmocked(s):
+        lines = content_from_ls(concatenate_lines(s._scls))
+        assert ' '*12+'"text node over multiple line' in lines
+        lines = concatenate_lines(s._scls)
+        assert (15, ' '*12+'"text node over multiple line', 'text') in lines
+
+    def test_concatenate_lines_mocked(s):
+        lines = [LineStructure(0, '"Text Node', 'text'),
+                LineStructure(1, '.. over multiple lines.', 'continue')]
+        assert '"Text Node over multiple lines.' in concatenate_lines(lines)[0].line
+        assert [LineStructure(0, '"Text Node over multiple lines.', 'text'),
+                ] == concatenate_lines(lines)
+
+    def test_line_folding(s):
+
+
+        pass
+
+
+
+
+
         
 
-
-# vi: set et ts=4 ts=4 ai cc=78 nowrap nu so=5:
+# vi: set et ts=4 ts=4 ai cc=78 nowrap rnu so=5:

@@ -24,8 +24,15 @@ Example:
 from collections import namedtuple, OrderedDict
 
 
+## as we progress from raw-text to html, the data structures 
+## continually evolve. Every line itself is structured by
+## (original line-number, content of the line)
+## the next step is to add a classifier to the structure:
+## (original line-number, content of the line, classifier)
+
 RawLine = namedtuple('RawLine', 'nr line')
-ClassifiedLine = namedtuple('ClassifiedLine', 'nr line cls')
+LineStructure = namedtuple('LineStructure', 'nr line cls')
+
 
 # read lines
 # remove comments and empty lines
@@ -37,13 +44,12 @@ ClassifiedLine = namedtuple('ClassifiedLine', 'nr line cls')
 
 def get_indent_level(line):
     """
-    takes a line 
+    takes a string representing a line 
     returns a number representing the indentation-level
-    
-    Because of the line-continuation symbol beeing two dots followed
-    by a space, the *reasonable* indentation seems to be 3.
     """
-    # explicit only normal whitespaces! no tabs, etc.
+    # Because of the line-continuation symbol beeing two dots followed
+    # by a space, the *reasonable* indentation seems to be 3.
+    # explicit only element whitespaces! no tabs, etc.
     count = len(line) - len(line.lstrip(' '))
     # TODO: we don't handle indentation errors, atm!
     level = int(count / 3)
@@ -60,19 +66,19 @@ def RawLines_from_str(text):
     return rls
 
 
-def ClassifiedLines_from_RawLines(rls):
+def LineStructures_from_RawLines(rls):
     """
     tales a RawLinesStructure 
-    returns a ClassifiedLinesStructure
+    returns a LineStructuresStructure
     """
-    cls = [ClassifiedLine(n, l, classify_line(l))
+    cls = [LineStructure(n, l, classify_line(l))
             for n, l in rls]
     return cls
 
 
-def sanitized_ClassifiedLines(cls):
+def sanitized_LineStructures(cls):
     """
-    takes a ClassifiedLineStructure
+    takes a LineStructureStructure
     returns a CLS without blanks and comments
     """
     sls = [t for t in cls if t.cls not in ('comment', 'blank')]
@@ -81,7 +87,7 @@ def sanitized_ClassifiedLines(cls):
 
 def split_by_classifier(cls, clsname):
     """
-    takes a ClassifiedLinesStructure 
+    takes a LineStructuresStructure 
     returns a split by named classifier
     """
     extracted = [t for t in cls if t.cls == clsname] or []
@@ -91,7 +97,7 @@ def split_by_classifier(cls, clsname):
 
 def split_macros(scls):
     """
-    takes a ClassifiedLinesStructure
+    takes a LineStructuresStructure
     returns two lists: (macros, scls without macros)
     """
     return split_by_classifier(scls, 'macro')
@@ -99,7 +105,7 @@ def split_macros(scls):
 
 def split_imports(scls):
     """
-    takes a ClassifiedLinesStructure
+    takes a LineStructuresStructure
     returns two lists: (imports, scls without imports)
     """
     return split_by_classifier(scls, 'import')
@@ -109,6 +115,9 @@ def classify_line(line):
     """
     takes a str representing a line
     returns a string classifying the type of line
+
+    atm, there are 8 line-cllassifiers:
+        blank, comment, continue, element, import, macro, text, verbatim
     """
     l = line.strip()
     # single classifier allowed:
@@ -124,10 +133,10 @@ def classify_line(line):
     if ' := ' in l and l.split(' := ', 1)[0].isupper():
         return 'macro'
 
-    return "normal"
+    return "element"
 
 
-def MacroDef_from_ClassifiedLines(cls):
+def MacroDef_from_LineStructures(cls):
     """
     takes classifiedLines
     returns a OrderedDict of MacorKey: MacroValue
@@ -139,9 +148,58 @@ def MacroDef_from_ClassifiedLines(cls):
     return macrodef
     
 
+def Imports_from_LineStructures(cls):
+    """
+    takes classifiedLines
+    returns a OrderedDict of MacorKey: MacroValue
+    """
+    imports = OrderedDict()
+    for i in cls:
+        k, v = i.line.lstrip('@ ')
+        imports[k] = v
+    return imports
+
+
+def expand_macros(cls, macros):
+    """
+    takes LineStructures
+    returns LineStructures, but without macros.
+    """
+    macro_free = []
+    for ls in cls:          # ls = line structure (nr, line, cls)
+        for m in macros:
+            if m in ls.line:
+                line = ls.line.replace(m, macros[m])
+                macro_free.append(LineStructure(ls.nr, line, ls.cls))
+    return macro_free
+
+
+def concatenate_lines(ls):
+    """
+    takes a list of LineStructures and 
+    returns a list of concatenated LineStructures, without 'continue' lines
+    """
+    concatenated = []
+    for current in ls:
+        new = current
+        if current.cls == 'continue':
+            lastline = concatenated.pop()
+            new_content = lastline.line + current.line.lstrip().lstrip('.')
+            new = LineStructure(lastline.nr,
+                                new_content,
+                                lastline.cls)
+            print(lastline.nr)
+        concatenated.append(new)
+
+    return concatenated
+
+def fold_lines(ls):
+    pass
+
+
+def content_from_ls(ls):
+    return [l.line for l in ls]
     
-
-
 
 if __name__ == '__main__':
     print("This file is meant to be imported, not to be executed.")
