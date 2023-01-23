@@ -2,6 +2,7 @@ from t5htmllib.lineparser import *
 
 import pytest
 from textwrap import dedent
+from collections import namedtuple
 
 
 class TestLineClassifiers:
@@ -53,6 +54,7 @@ class TestLineParsing:
     """
     def setup_class(c):
         c._html = dedent(c.__doc__)
+        c._rls = namedtuple('RawLine', 'nr, line')
 
     def test_doc_as_text(s):
         assert '# t5html' in s._html
@@ -69,5 +71,54 @@ class TestLineParsing:
         manual = enumerate([b,c,b,m,v,i,b,*(n,)*8,t,cc,n,n])
         auto = enumerate(map(classify_line, s._html.splitlines()))
         assert list(auto) == list(manual)
+
+    def test_RawLineStructure_fromRawString(s):
+        rls = RawLines_from_str(s._html)
+        assert rls[1] == (1, '# t5html')
+        assert rls[-1] == (18, ' '*9+'section')
+
+    def test_classifed_LineStructure(s):
+        cls = ClassifiedLines_from_RawLines(
+                RawLines_from_str(s._html))
+        assert cls[1] == (1, '# t5html', 'comment')
+        assert cls[-1] == (18, ' '*9+'section', 'normal')
+
+    def test_sanitized_cls(s):
+        scls = sanitized_ClassifiedLines(
+                ClassifiedLines_from_RawLines(
+                    RawLines_from_str(s._html)))
+        assert scls[0] == (3, 'HTML5 := <!DOCTYPE html>', 'macro')
+        assert scls[1] == (4, '!! HTML5', 'verbatim')
+        assert scls[2] == (5, '@@ file from src', 'import')
+        assert scls[-3] == (16, ' '*12+'.. over multiple line', 'continue')
+        assert scls[-1] == (18, ' '*9+'section', 'normal')
+
+    
+    def test_extract_macros(s):
+        macros, cls = split_macros(
+                sanitized_ClassifiedLines(
+                    ClassifiedLines_from_RawLines(
+                        RawLines_from_str(s._html))))
+        assert macros == [(3, 'HTML5 := <!DOCTYPE html>', 'macro')]
+        assert cls[0] == (4, '!! HTML5', 'verbatim')
+        assert cls[1] == (5, '@@ file from src', 'import')
+
+
+    def test_extract_imports(s):
+        imports, cls = split_imports(
+                sanitized_ClassifiedLines(
+                    ClassifiedLines_from_RawLines(
+                        RawLines_from_str(s._html))))
+        assert imports == [(5, '@@ file from src', 'import')]
+        assert cls[0] == (3, 'HTML5 := <!DOCTYPE html>', 'macro')
+        assert cls[1] == (4, '!! HTML5', 'verbatim')
+
+
+    def test_macrodef_from_LineStructure(s):
+        pass
+
+
+        
+
 
 # vi: set et ts=4 ts=4 ai cc=78 nowrap nu so=5:

@@ -21,9 +21,11 @@ Example:
         " text-node
 
 """
-import logging as _L
-_L.basicConfig(filename='/tmp/lineparser.log')
+from collections import namedtuple
 
+
+RawLine = namedtuple('RawLine', 'nr line')
+ClassifiedLine = namedtuple('ClassifiedLine', 'nr line cls')
 
 # read lines
 # remove comments and empty lines
@@ -43,11 +45,65 @@ def get_indent_level(line):
     """
     # explicit only normal whitespaces! no tabs, etc.
     count = len(line) - len(line.lstrip(' '))
-    level = count / 3
-    if type(level) == float:
-        _L.warning("indentation whacky")
-    return int(level)
+    # TODO: we don't handle indentation errors, atm!
+    level = int(count / 3)
+    return level
 
+
+def RawLines_from_str(text):
+    """
+    takes a string 
+    returns a RawLineStructure [(nr, line), ...]
+    """
+    rls = [RawLine(n, l.rstrip())
+            for n, l in enumerate(text.splitlines())]
+    return rls
+
+
+def ClassifiedLines_from_RawLines(rls):
+    """
+    tales a RawLinesStructure 
+    returns a ClassifiedLinesStructure
+    """
+    cls = [ClassifiedLine(n, l, classify_line(l))
+            for n, l in rls]
+    return cls
+
+
+def sanitized_ClassifiedLines(cls):
+    """
+    takes a ClassifiedLineStructure
+    returns a CLS without blanks and comments
+    """
+    sls = [t for t in cls if t.cls not in ('comment', 'blank')]
+    return sls
+
+
+def split_by_classifier(cls, clsname):
+    """
+    takes a ClassifiedLinesStructure 
+    returns a split by named classifier
+    """
+    extracted = [t for t in cls if t.cls == clsname] or []
+    rest = [t for t in cls if not t.cls == clsname]
+    return extracted, rest
+
+
+def split_macros(scls):
+    """
+    takes a ClassifiedLinesStructure
+    returns two lists: (macros, scls without macros)
+    """
+    return split_by_classifier(scls, 'macro')
+    
+
+def split_imports(scls):
+    """
+    takes a ClassifiedLinesStructure
+    returns two lists: (imports, scls without imports)
+    """
+    return split_by_classifier(scls, 'import')
+    
 
 def classify_line(line):
     """

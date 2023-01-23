@@ -62,4 +62,43 @@ pyproject_hooks 1.0.0
 setuptools      59.6.0
 tomli           2.0.1
 
+
+## Design considerations
+
+The t5html format should be:
+
+    1. easy to read (format should be readable without consulting the doc)
+    2. easy to write manually (help the dev avoiding redundant repetitions)
+
+Therefore we decided:
+
+    1. symbol/word boundaries by whitespaces!
+    2. indentation as parent/child relation indicator
+    3. line continuation with leading `..`
+    4. only spaces no tabs allowed
+
+The double-tap `..` as line continuation has some odd repercusions, which we
+don't consider bad, but somewhat unusual: it makes shift-width (tab) of three 
+more logical to keep alignment.
+
+
+### data transitions:
+
+    - [(line-number, line-as-string), ...]  <- from raw lines, e.g. read()
+    - classify lines: [(line-number, line-as-string, classification), ...]
+    - remove blanks, comments:  [(nr, line, cls), ...]
+    - extract macros and import:  [(nr, line, cls), ...]
+    - expand macros [(nr, line, cls), ...]
+    - line-splitting/-concatenation/-append [(nr, line, cls), ...]
+    - reclasssification of unclassified lines [(nr, line, cls), ...]
+    - build-tree [(nr, meta-line, cls), ... ]
+    - build html [(nr, html-line, cls), ... ]
+
+Line-numbers reflect the original line-nr, so errors can be mapped to the user
+provided input-file.
+We could possibly add an additional current line-number, but as long as we don't
+have a useful use-case, we abstain feom doing so.
+
+
+
 [//]: vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en:
