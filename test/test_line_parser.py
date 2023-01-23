@@ -54,7 +54,6 @@ class TestLineParsing:
     """
     def setup_class(c):
         c._html = dedent(c.__doc__)
-        c._rls = namedtuple('RawLine', 'nr, line')
 
     def test_doc_as_text(s):
         assert '# t5html' in s._html
@@ -94,30 +93,50 @@ class TestLineParsing:
         assert scls[-1] == (18, ' '*9+'section', 'normal')
 
     
+class TestSanitizedLineParsing:
+    """
+    # t5html
+
+    HTML5 := <!DOCTYPE html>
+    !! HTML5
+    @@ file from src
+
+    html
+       head
+          title > "t5html example
+       body
+       header | nav
+       main
+          article
+             section
+                "text node
+                .. over multiple line
+          article
+             section
+    """
+    def setup_class(c):
+        c._html = dedent(c.__doc__)
+        c._scls = sanitized_ClassifiedLines(
+                ClassifiedLines_from_RawLines(
+                    RawLines_from_str(c._html)))
+
     def test_extract_macros(s):
-        macros, cls = split_macros(
-                sanitized_ClassifiedLines(
-                    ClassifiedLines_from_RawLines(
-                        RawLines_from_str(s._html))))
+        macros, cls = split_macros(s._scls)
         assert macros == [(3, 'HTML5 := <!DOCTYPE html>', 'macro')]
-        assert cls[0] == (4, '!! HTML5', 'verbatim')
-        assert cls[1] == (5, '@@ file from src', 'import')
+        assert (4, '!! HTML5', 'verbatim') in cls
+        assert (5, '@@ file from src', 'import') in cls
 
 
     def test_extract_imports(s):
-        imports, cls = split_imports(
-                sanitized_ClassifiedLines(
-                    ClassifiedLines_from_RawLines(
-                        RawLines_from_str(s._html))))
+        imports, cls = split_imports(s._scls)
         assert imports == [(5, '@@ file from src', 'import')]
-        assert cls[0] == (3, 'HTML5 := <!DOCTYPE html>', 'macro')
-        assert cls[1] == (4, '!! HTML5', 'verbatim')
+        assert (3, 'HTML5 := <!DOCTYPE html>', 'macro') in cls
+        assert (4, '!! HTML5', 'verbatim') in cls
 
 
     def test_macrodef_from_LineStructure(s):
-        pass
-
-
+        macros, cls = split_macros(s._scls)
+        assert MacroDef_from_ClassifiedLines(macros) == {'HTML5' : '<!DOCTYPE html>'}
         
 
 

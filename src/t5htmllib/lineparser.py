@@ -21,7 +21,7 @@ Example:
         " text-node
 
 """
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 
 
 RawLine = namedtuple('RawLine', 'nr line')
@@ -126,9 +126,21 @@ def classify_line(line):
 
     return "normal"
 
-def remove_lines(lines):
+
+def MacroDef_from_ClassifiedLines(cls):
     """
+    takes classifiedLines
+    returns a OrderedDict of MacorKey: MacroValue
     """
+    macrodef = OrderedDict()
+    for m in cls:
+        k, v = m.line.split(' := ')
+        macrodef[k] = v
+    return macrodef
+    
+
+    
+
 
 
 if __name__ == '__main__':
