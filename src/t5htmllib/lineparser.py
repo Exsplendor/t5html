@@ -22,6 +22,7 @@ Example:
 
 """
 from collections import namedtuple, OrderedDict
+import re
 
 
 ## as we progress from raw-text to html, the data structures 
@@ -188,13 +189,51 @@ def concatenate_lines(ls):
             new = LineStructure(lastline.nr,
                                 new_content,
                                 lastline.cls)
-            print(lastline.nr)
         concatenated.append(new)
 
     return concatenated
 
+FOLDS = re.compile(r' (<|>|\|) ')
 def fold_lines(ls):
-    pass
+    """
+    takes a list of  LineStructures
+    returns a list of LineStructures
+    """
+    folded = []
+    for current in ls:
+        foldseq = FOLDS.findall(current.line)
+        if not foldseq:
+            folded.append(current)
+            continue
+
+        lines = split_fold(current.line, foldseq)
+        level = get_indent_level(lines[0])
+        for idx, fold in enumerate(foldseq, start=1):
+            print(idx, fold)
+            level = level + 1 if fold == '>' else level
+            level = level - 1 if fold == '<' else level
+            level = level if level > 0 else 0
+            indent = (3 * level) * ' '
+            lines[idx] = indent + lines[idx]
+
+        for line in lines:
+            folded.append(LineStructure(current.nr, line, current.cls))
+    return folded
+
+
+def split_fold(linestr, foldseq):
+    """
+    takes a line as string and a sequence of fold-symbols to
+    return a list of lines splitted by the fold-symbols
+    """
+    folded, line = [], linestr
+    for fold in foldseq:
+        nextline, rest = line.split(fold, 1)
+        folded.append(nextline.rstrip())
+        line = rest.lstrip()
+    else:
+        folded.append(rest.lstrip())
+    return folded
 
 
 def content_from_ls(ls):

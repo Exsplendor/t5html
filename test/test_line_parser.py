@@ -141,9 +141,6 @@ class TestSanitizedLineParsing:
         macrodef = MacroDef_from_LineStructures(macros)
         assert '!! <!DOCTYPE html>' in [tpl.line for tpl in expand_macros(cls, macrodef)]
 
-    def test_fold_lines(s):
-        lines = content_from_ls(s._scls)
-
     def test_concatenate_lines_lessmocked(s):
         lines = content_from_ls(concatenate_lines(s._scls))
         assert ' '*12+'"text node over multiple line' in lines
@@ -157,15 +154,47 @@ class TestSanitizedLineParsing:
         assert [LineStructure(0, '"Text Node over multiple lines.', 'text'),
                 ] == concatenate_lines(lines)
 
-    def test_line_folding(s):
+    def test_split_fold(s):
+        foldseq = list(">|<")
+        line = "p > c | s < p"
+        assert split_fold(line, foldseq) == ['p', 'c', 's', 'p']
+
+    def test_line_folding_1(s):
+        line = "parent > child "
+        assert fold_lines([LineStructure(0, line, 'element')]) == [
+                LineStructure(0, 'parent', 'element'),
+                LineStructure(0, '   child ', 'element')]
+
+    def test_line_folding_2(s):
+        line = "parent | sibling"
+        assert fold_lines([LineStructure(0, line, 'element')]) == [
+                LineStructure(0, 'parent', 'element'),
+                LineStructure(0, 'sibling', 'element')]
+
+    def test_line_folding_3(s):
+        line = "parent > child | sibling"
+        assert fold_lines([LineStructure(0, line, 'element')]) == [
+                LineStructure(0, 'parent', 'element'),
+                LineStructure(0, '   child', 'element'),
+                LineStructure(0, '   sibling', 'element')]
+
+    def test_line_folding_4(s):
+        line = "parent > child | sibling < parent"
+        assert fold_lines([LineStructure(0, line, 'element')]) == [
+                LineStructure(0, 'parent', 'element'),
+                LineStructure(0, '   child', 'element'),
+                LineStructure(0, '   sibling', 'element'),
+                LineStructure(0, 'parent', 'element')]
+
+    def test_line_folding_5(s):
+        "root element is already indented"
+        line = "   parent > child | sibling < parent"
+        assert fold_lines([LineStructure(0, line, 'element')]) == [
+                LineStructure(0, '   parent', 'element'),
+                LineStructure(0, '      child', 'element'),
+                LineStructure(0, '      sibling', 'element'),
+                LineStructure(0, '   parent', 'element')]
 
 
-        pass
-
-
-
-
-
-        
 
 # vi: set et ts=4 ts=4 ai cc=78 nowrap rnu so=5:
