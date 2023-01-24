@@ -49,4 +49,4 @@ html
 Start with `Read.4dev` in the `doc` directory.
 
 
-[//]: vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en:
+[//]: # vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en:

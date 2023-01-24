@@ -172,6 +172,8 @@ def expand_macros(cls, macros):
             if m in ls.line:
                 line = ls.line.replace(m, macros[m])
                 macro_free.append(LineStructure(ls.nr, line, ls.cls))
+            else:
+                macro_free.append(ls )
     return macro_free
 
 
@@ -209,7 +211,6 @@ def fold_lines(ls):
         lines = split_fold(current.line, foldseq)
         level = get_indent_level(lines[0])
         for idx, fold in enumerate(foldseq, start=1):
-            print(idx, fold)
             level = level + 1 if fold == '>' else level
             level = level - 1 if fold == '<' else level
             level = level if level > 0 else 0
@@ -234,6 +235,24 @@ def split_fold(linestr, foldseq):
     else:
         folded.append(rest.lstrip())
     return folded
+
+
+def parse_str(t5html):
+    """
+    takes a raw string formatted as t5html-text
+    returns a completly processed list of LineStrucrues ready to be converted
+        to html
+    """
+    raw = RawLines_from_str(t5html)
+    lines = LineStructures_from_RawLines(raw)
+    lines = sanitized_LineStructures(lines)
+    macros, lines = split_macros(lines)
+    imports, lines = split_imports(lines)
+    macrodef = MacroDef_from_LineStructures(macros)
+    lines = expand_macros(lines, macrodef)
+    lines = concatenate_lines(lines)
+    lines = fold_lines(lines)
+    return lines
 
 
 def content_from_ls(ls):
