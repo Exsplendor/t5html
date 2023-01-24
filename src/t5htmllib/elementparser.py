@@ -40,7 +40,6 @@ def element_name(elementstr):
     return elementstr[1:].split(' ', 1)[0]
 
 
-
 def separate_element_from_attributes(line):
     """
     takes a raw element-line (e.g.: 'ele#id.cls atr1 atr2=val') and

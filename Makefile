@@ -27,6 +27,7 @@ VERSION := $(shell date +%y.%m.%d)
 DESC := "Converts text to html. Text muste be in t5html form."
 CVSURL := ""
 TOPIC := "Topic :: Text Processing :: Markup :: HTML"
+CFGFILE := pyproject.toml
 
 define HELP
 
@@ -125,7 +126,7 @@ build: initbuild
 > pip -V | grep ${VENV} || source ${VENVSTART}
 > ${PYTHON} -m build
 
-initbuild: pyproject.toml
+initbuild: ${CFGFILE}
 > pip -V | grep ${VENV} || source ${VENVSTART}
 > pip install --require-virtualenv build
 
@@ -136,6 +137,10 @@ pyproject.toml:
 
 dist-clean:
 > @rm -rf dist .pytest_cache
+
+
+version-bump:
+> sed -i "s/version = .*/version = ${VERSION}/" ${CFGFILE}
 
 
 publish: build
