@@ -136,4 +136,10 @@ class TestReformatElementLine:
         _out = '<div id="myid" class="cls cls" attr1="value">'
         assert parse_element(_in) == _out
 
+    def test_get_tag(s):
+        _in = 'div#myid.cls.cls attr1=value'
+        _out = '<div id="myid" class="cls cls" attr1="value">'
+        assert element_name(parse_element(_in)) == 'div'
+
+
 # vi: set et ts=4 ts=4 ai cc=78 nowrap nu so=5:

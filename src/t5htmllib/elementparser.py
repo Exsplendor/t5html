@@ -16,7 +16,7 @@ Example:
 def parse_element(line):
     """
     takes a raw-line and
-    returns a formatted line 
+    returns a string formatted as a html-tag
     """
     element, attributes = separate_element_from_attributes(line)
     _es = elementStructure_fromString(element)
@@ -27,6 +27,18 @@ def parse_element(line):
 
     reformatted = f'<{element_head} {element_attributes}>'
     return reformatted
+
+
+def element_name(elementstr):
+    """
+    takes a string formatted as a html-tag
+        e.g.: '<div id="example">
+    returns a string with the name of the tag
+        e.g.: 'div'
+    """
+    # There's no error checking!
+    return elementstr[1:].split(' ', 1)[0]
+
 
 
 def separate_element_from_attributes(line):

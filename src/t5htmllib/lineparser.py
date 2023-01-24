@@ -173,7 +173,7 @@ def expand_macros(cls, macros):
                 line = ls.line.replace(m, macros[m])
                 macro_free.append(LineStructure(ls.nr, line, ls.cls))
             else:
-                macro_free.append(ls )
+                macro_free.append(ls)
     return macro_free
 
 
