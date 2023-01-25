@@ -252,6 +252,9 @@ def parse_str(t5html):
     lines = expand_macros(lines, macrodef)
     lines = concatenate_lines(lines)
     lines = fold_lines(lines)
+
+    # reclassify the lines after all the folding and unfolding:
+    lines = [LineStructure(l.nr, l.line, classify_line(l.line)) for l in lines]
     return lines
 
 

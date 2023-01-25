@@ -23,7 +23,7 @@ MAKEFLAGS += --no-builtin-rules
 TITLE := t5html
 AUTHOR := splendor
 EMAIL := em.notorp@sirolf.rodnelps
-VERSION := $(shell date +%y.%m.%d)
+VERSION := $(shell date +%y.%ma%d)
 DESC := "Converts text to html. Text muste be in t5html form."
 CVSURL := ""
 TOPIC := "Topic :: Text Processing :: Markup :: HTML"
@@ -140,10 +140,11 @@ dist-clean:
 
 
 version-bump:
-> sed -i "s/version = .*/version = ${VERSION}/" ${CFGFILE}
+> sed -i "s/version = .*/version = \"${VERSION}\"/" ${CFGFILE}
 
 
 publish: build
+> source ${VENVSTART}
 > twine upload --repository testpypi dist/t5html*
 
 

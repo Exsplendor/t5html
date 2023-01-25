@@ -3,6 +3,9 @@
 """
 from t5htmllib import lineparser as lp
 from t5htmllib import elementparser as ep
+from t5htmllib import treebuilder as tb
+
+from pprint import pprint
 example = """
 ## t5html
 
@@ -34,8 +37,11 @@ def start():
     """
     lines = lp.parse_str(example)
 
-    print(lines)
+    #pprint(lines)
     #print(lp.content_from_ls(lines))
+
+    lines = tb.Tree_from(example)
+    pprint(lines)
 
 
 if __name__ == "__main__":
