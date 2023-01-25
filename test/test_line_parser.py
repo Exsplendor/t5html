@@ -22,13 +22,10 @@ class TestLineClassifiers:
         assert classify_line('@ path/to/file') == "import"
 
 
-def test_indent_level():
-    assert get_indent_level('') == 0
-    assert get_indent_level(' '*3) == 1
-    assert get_indent_level(' '*6) == 2
-    # test for int:
-    assert get_indent_level(' '*7) == 2
-    assert get_indent_level('\t'*2) ==0
+tdata_indent = [ ('', 0), (' '*3, 1), (' '*6, 2), (' '*7, 2), ('\t'*3, 0) ]
+@pytest.mark.parametrize("input, expected", tdata_indent)
+def test_indent_level(input, expected):
+    assert get_indent_level(input) == expected
 
 
 class TestLineParsing:
@@ -151,6 +148,11 @@ class TestSanitizedLineParsing:
         lines = [LineStructure(0, '"Text Node', 'text'),
                 LineStructure(1, '.. over multiple lines.', 'continue')]
         assert '"Text Node over multiple lines.' in concatenate_lines(lines)[0].line
+        lines = [LineStructure(0, '"Text Node', 'text'),
+                LineStructure(1, '..over multiple lines.', 'continue')]
+        assert '"Text Nodeover multiple lines.' in concatenate_lines(lines)[0].line
+        lines = [LineStructure(0, '"Text Node', 'text'),
+                LineStructure(1, '.. over multiple lines.', 'continue')]
         assert [LineStructure(0, '"Text Node over multiple lines.', 'text'),
                 ] == concatenate_lines(lines)
 
