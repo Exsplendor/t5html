@@ -25,8 +25,8 @@ def parse_element(line):
     element_head = stringify_ElementStructure(_es)
     element_attributes = stringify_AttributeStructure(_as)
 
-    reformatted = f'<{element_head} {element_attributes}>'
-    return reformatted
+    line = f'<{element_head} {element_attributes}>' if element_attributes else f'<{element_head}>'
+    return line
 
 
 def element_name(elementstr):
@@ -37,7 +37,7 @@ def element_name(elementstr):
         e.g.: 'div'
     """
     # There's no error checking!
-    return elementstr[1:].split(' ', 1)[0]
+    return elementstr[1:-1].split(' ', 1)[0]
 
 
 def separate_element_from_attributes(line):
@@ -121,7 +121,10 @@ def stringify_ElementStructure(es):
     returns a string
     """
     (tag, _id, classes) = es
-    return f'{tag} id="{_id}" class="{" ".join(classes)}"' 
+    line = f'{tag} id="{_id}"' if _id else f'{tag}'
+    line += f' class="{" ".join(classes)}"'  if classes else ''
+    
+    return line
 
 
 if __name__ == '__main__':

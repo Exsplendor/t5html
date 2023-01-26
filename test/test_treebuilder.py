@@ -14,9 +14,20 @@ def test_Tree_from_exception_on_wrong_input_type(src, expected):
         b = Tree_from(src)
     assert str(einfo.value).startswith(expected)
 
-def test_Tree_from_exception_on_correct_input():
-    b = Tree_from([LineStructure(0, '!! TEST', 'verbatim')])
-    assert type(b) == list
-    assert type(b[0]) == LineStructure
+@pytest.mark.parametrize("src, expected",
+        [(pseudoAST_from([LineStructure(0, '!! TEST', 'verbatim')]), list),
+         (pseudoAST_from([LineStructure(0, '!! TEST', 'verbatim')])[0], TreeElement)])
+def test_pseudoAST_exception_on_correct_input(src, expected):
+    assert type(src) == expected
 
-# vi: set et ts=4 ts=4 ai :
+def test_pseudoAST_simple_t5html_input():
+    data = 'html > head | body > div#main.imp.test > p > "some text'
+    tree = pseudoAST_from(LineStructureFactory(data))
+    assert TreeElement(3,'p','<p>',0) in tree
+    assert TreeElement(1,'body','<body>',0) in tree
+
+def test_html_from_t5html():
+    data = 'html > head | body > div#main.imp.test > p > "some text'
+    assert HTML_from_t5html(data) == True
+
+# vi: set et ts=4 ts=4 ai cc=78 :

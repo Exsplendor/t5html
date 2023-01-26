@@ -174,7 +174,8 @@ def expand_macros(cls, macros):
                 macro_free.append(LineStructure(ls.nr, line, ls.cls))
             else:
                 macro_free.append(ls)
-    return macro_free
+        
+    return macro_free if macro_free else cls
 
 
 def concatenate_lines(ls):

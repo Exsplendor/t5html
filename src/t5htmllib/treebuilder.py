@@ -15,8 +15,10 @@ from t5htmllib import elementparser as ep
 
 import sys
 from collections import namedtuple
+from itertools import zip_longest
 
-TreeElement = namedtuple("TreeElement", "level type value orig_lnr")
+
+TreeElement = namedtuple("TreeElement", "level tag value orig_lnr")
 
 
 def build_from_str(t5htmlstr):
@@ -46,13 +48,42 @@ def LineStructureFactory(src):
 def pseudoAST_from(structured_lines):
     """
     tales a list of linestructures
-    retruns a pseudoast
+    returns a pseudoast
     """
+    getvalue = lambda l: l.line.lstrip()\
+                            if l.cls != 'element'\
+                            else ep.parse_element(l.line.lstrip())
     return [ TreeElement(
                 lp.get_indent_level(line.line),
-                line.cls,
-                line.line.lstrip(),
+                ep.element_name(getvalue(line)) if line.cls == 'element' else None,
+                getvalue(line), 
                 line.nr) for line in structured_lines]
+
+
+def html_tree_from_ast(ast):
+    """
+    takes a (pseudo-)ast
+    returns a list of formatted html lines
+    """
+    indentstr = lambda x: x*3*" "
+    tree, tagstack = [], []
+    for element, peek in zip_longest(ast, ast[1:], fillvalue=None):
+        # this will cause errors for text-nodes with values like: "! some text 
+        line = element.value.strip('"').strip('!') if not element.tag else element.value
+        if peek:
+            if peek.level > element.level:
+                tagstack.append(element.tag)
+            elif peek.level == element.level and element.tag:
+                # self-closing tag
+                line = line[:-1] + '/>'
+            else:
+                line = '</' + tagstack.pop() + '>'
+        tree.append(indentstr(element.level) + line)
+    else:
+        while tagstack:
+            line = '</' + tagstack.pop() + '>'
+            tree.append(indentstr(element.level) + line)
+    return tree
 
 
 def Tree_from(src):
@@ -66,12 +97,16 @@ def Tree_from(src):
         # non LineStructures, to differentiate from a valid LineStructures-List
         raise Exception("Can't parse source of type: %s." % type(src))
     ast = pseudoAST_from(structured_lines)
+    tree = html_tree_from_ast(ast)
+    return tree
 
-    tree = []
-    for element in ast:
-        pass
 
-    return structured_lines
+def HTML_from_t5html(src):
+    """
+    takes a string in t5html format
+    returns a string as HTML5
+    """
+    return '\n'.join(Tree_from(src))
     
 
 if __name__ == '__main__':
