@@ -92,7 +92,7 @@ def attributesStructure_fromString(attribute_str):
 
         is_assignment = '=' in word
         if is_assignment:
-            key, value = word.split('=')
+            key, value = word.split('=', 1)
             if value.startswith('"') and not value.endswith('"'):
                 next_word_belongs_to_last_value = True
             attr = key, value.strip('"')

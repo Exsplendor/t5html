@@ -65,7 +65,7 @@ def html_tree_from_ast(ast):
     takes a (pseudo-)ast
     returns a list of formatted html lines
     """
-    indentstr = lambda x: x*3*" "
+    indentstr = lambda x: x*2*" "
     tree, tagstack = [], []
     for element, peek in zip_longest(ast, ast[1:], fillvalue=None):
         # this will cause errors for text-nodes with values like: "! some text 

@@ -1,11 +1,15 @@
 #!/usr/bin/python3
 """
-"""
-from t5htmllib import lineparser as lp
-from t5htmllib import elementparser as ep
-from t5htmllib import treebuilder as tb
+t5html converts a t5html-formatted file into HTML
 
-from pprint import pprint
+USAGE:
+
+    t5html filename
+"""
+from t5htmllib import make_html
+
+import sys
+
 example = """
 ## t5html
 
@@ -35,13 +39,13 @@ def start():
     """
     entry point
     """
-    lines = lp.parse_str(example)
-
-    #pprint(lines)
-    #print(lp.content_from_ls(lines))
-
-    lines = tb.HTML_from_t5html(example)
-    pprint(lines)
+    if len(sys.argv) == 2:
+        fname = sys.argv[1]
+    else:
+        exit(__doc__ + "\n\nERROR: Seems like we didn't get a filename")
+    with open(fname) as f:
+        input = f.read()
+    print(make_html(input))
 
 
 if __name__ == "__main__":

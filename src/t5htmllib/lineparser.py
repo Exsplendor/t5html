@@ -168,12 +168,12 @@ def expand_macros(cls, macros):
     """
     macro_free = []
     for ls in cls:          # ls = line structure (nr, line, cls)
+        line = ls.line
         for m in macros:
-            if m in ls.line:
+            if m in line:
                 line = ls.line.replace(m, macros[m])
-                macro_free.append(LineStructure(ls.nr, line, ls.cls))
-            else:
-                macro_free.append(ls)
+                
+        macro_free.append(LineStructure(ls.nr, line, ls.cls))
         
     return macro_free if macro_free else cls
 
@@ -229,12 +229,12 @@ def split_fold(linestr, foldseq):
     return a list of lines splitted by the fold-symbols
     """
     folded, line = [], linestr
-    for fold in foldseq:
-        nextline, rest = line.split(fold, 1)
-        folded.append(nextline.rstrip())
-        line = rest.lstrip()
+    for sym in foldseq:
+        line, nextline = line.split(sym, 1)
+        folded.append(line.rstrip())
+        line = nextline.lstrip()
     else:
-        folded.append(rest.lstrip())
+        folded.append(line.lstrip())
     return folded
 
 
@@ -247,12 +247,14 @@ def parse_str(t5html):
     raw = RawLines_from_str(t5html)
     lines = LineStructures_from_RawLines(raw)
     lines = sanitized_LineStructures(lines)
+    lines = concatenate_lines(lines)
     macros, lines = split_macros(lines)
     imports, lines = split_imports(lines)
     macrodef = MacroDef_from_LineStructures(macros)
     lines = expand_macros(lines, macrodef)
-    lines = concatenate_lines(lines)
     lines = fold_lines(lines)
+    # BUG: 2nd expansion needed because of a folding/macro issue
+    lines = expand_macros(lines, macrodef)
 
     # reclassify the lines after all the folding and unfolding:
     lines = [LineStructure(l.nr, l.line, classify_line(l.line)) for l in lines]

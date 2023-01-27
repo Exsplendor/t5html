@@ -28,6 +28,6 @@ def test_pseudoAST_simple_t5html_input():
 
 def test_html_from_t5html():
     data = 'html > head | body > div#main.imp.test > p > "some text'
-    assert '   </body>' in HTML_from_t5html(data) 
+    assert '  </body>' in HTML_from_t5html(data) 
 
 # vi: set et ts=4 ts=4 ai cc=78 :
