@@ -6,7 +6,7 @@ Utilizes the lineparser and elementparser modules.
 
 Example:
 
-    html = html_from_t5html(rawstr)
+    html = HTML_from_t5html(rawstr)
 
 """
 
@@ -70,19 +70,25 @@ def html_tree_from_ast(ast):
     for element, peek in zip_longest(ast, ast[1:], fillvalue=None):
         # this will cause errors for text-nodes with values like: "! some text 
         line = element.value.strip('"').strip('!') if not element.tag else element.value
+        level = element.level
         if peek:
             if peek.level > element.level:
+                # normal tag
                 tagstack.append(element.tag)
             elif peek.level == element.level and element.tag:
                 # self-closing tag
                 line = line[:-1] + '/>'
-            else:
-                line = '</' + tagstack.pop() + '>'
-        tree.append(indentstr(element.level) + line)
+        tree.append(indentstr(level) + line)
+
+        if peek and peek.level < element.level:
+            level = peek.level
+            line = '</' + tagstack.pop() + '>' if tagstack else ''
+            tree.append(indentstr(level) + line)
     else:
         while tagstack:
-            line = '</' + tagstack.pop() + '>'
-            tree.append(indentstr(element.level) + line)
+            line = '</' + tagstack.pop() + '>' if tagstack else ''
+            level -= 1
+            tree.append(indentstr(level) + line)
     return tree
 
 
@@ -106,7 +112,7 @@ def HTML_from_t5html(src):
     takes a string in t5html format
     returns a string as HTML5
     """
-    return '\n'.join(Tree_from(src))
+    return '\n'.join(Tree_from(src)).strip()
     
 
 if __name__ == '__main__':

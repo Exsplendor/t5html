@@ -14,20 +14,20 @@ DOCTYPE := <!DOCTYPE html>
 !! DOCTYPE
 
 !! <-- This is
-.. and html comment
+.. a html comment
 .. over multiple lines -->
 
 html
    head
    body
-      div.id.cls1.cls2 attr1=value1 attr2="some quoted value"
-         article.id > p > "textnode
+      div#id.cls1.cls2 attr1=value1 attr2="some quoted value"
+         article#id > p > "textnode
             .. over multiple
             .. lines
             section
-               p.id1 | p.id2 | p.id3
-               p.id4 > "Text Node < p.id5
-               p.id6
+               p#id1 | p#id2 | p#id3
+               p#id4 > "Text Node < p#id5
+               p#id6
                   "Text Node
 """
 
@@ -40,7 +40,7 @@ def start():
     #pprint(lines)
     #print(lp.content_from_ls(lines))
 
-    lines = tb.Tree_from(example)
+    lines = tb.HTML_from_t5html(example)
     pprint(lines)
 
 

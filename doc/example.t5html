@@ -1,0 +1,23 @@
+## t5html
+
+## definitions / macros
+##
+DOCTYPE := <!DOCTYPE html>
+
+
+!DOCTYPE
+html
+   head
+   body
+      main
+         article=example
+            h1 > "This is an t5html-example
+            p class=p-normal
+               " A human readable and strucured file
+               .. written in a specific format called the
+               .. Trivial Text-Tree To Trivial HTML (ttttthtml or t5html)
+               .. format, allows for easy prototyping of web-pages.
+
+
+
+# vi: set et sw=3 ts=3 :
