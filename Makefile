@@ -148,7 +148,7 @@ version-bump:
 
 publish: build
 > source ${VENVSTART}
-> twine upload --repository testpypi dist/t5html*
+> twine upload --repository pypi dist/t5html*
 
 
 # vi: et sw=4 ts=4 list

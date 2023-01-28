@@ -6,6 +6,13 @@ Converts a text file into HTML.
 The text must be formatted according to the rules of a Trivial Text Tree To
 Trivial HTML (T5HTML) file.
 
+---
+
+- [Example](#example)
+- [Syntax Overview](#t5html-syntax)
+- [Developers](#for-developers)
+
+---
 
 ## Disclaimers
 
@@ -97,19 +104,19 @@ translates into:
 
 1. Every line is processed separatly
 
-2. except a line is the continuation of the previous one, signified by a
+2. except if a line is the continuation of a previous one, signified by a
    leading `..`
 
-3. Whitespaces are important! Don't ignore them, they seperate syntactic
+3. Whitespaces are important! Don't ignore them, they separate syntactic
    elements.
 
 4. Indentation matters! Every indentation marks a hierarchical step down!
 
-5. There are 6 type of lines: blanks, verbatim, elements, comments, text-nodes,
-   macros.
+5. There are six types of lines: blank, verbatim, elements, comments, macros
+   text-nodes.
 
 6. Every line-type starts with a special symbol, except: blanks, elements and
-   macros.
+   macros (!!, ##, "").
 
 7. Macros have a macroname followed by an assignment operator `:=` and after a
    white-space the macro-value.
@@ -125,8 +132,6 @@ translates into:
     line, e.g.: `div > p > "Paragraph text`.
 
 12. A leading `"` double-quote marks a text-node.
-
-
 
 
 ## For Developers
