@@ -1,6 +1,6 @@
 import pytest
 
-from t5htmllib.elementparser import *
+from t5html.elementparser import *
 
 
 class Test_Element_Attr_Separation:

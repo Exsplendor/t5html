@@ -23,7 +23,7 @@ MAKEFLAGS += --no-builtin-rules
 TITLE := t5html
 AUTHOR := splendor
 EMAIL := em.notorp@sirolf.rodnelps
-VERSION := $(shell date +%y.%ma%d)
+VERSION := $(shell date +%y.%mb%d)
 DESC := "Converts text to html. Text muste be in t5html form."
 CVSURL := ""
 TOPIC := "Topic :: Text Processing :: Markup :: HTML"
@@ -53,6 +53,9 @@ Usage:
     make publish
         uploads the build into pypi (test-pypi atm)
 
+    make version-bump
+        changes the version in ${CFGFILE}
+
 endef
 
 define PYPROJECT_TOML
@@ -73,7 +76,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Development Status :: 1 - Planning",
+    "Development Status :: 4 - Beta",
     ${TOPIC},
 ]
 

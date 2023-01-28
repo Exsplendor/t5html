@@ -1,5 +1,5 @@
-from t5htmllib.treebuilder import *
-from t5htmllib.lineparser import *
+from t5html.treebuilder import *
+from t5html.lineparser import *
 
 
 import pytest

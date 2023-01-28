@@ -10,8 +10,8 @@ Example:
 
 """
 
-from t5htmllib import lineparser as lp
-from t5htmllib import elementparser as ep
+from . import lineparser as lp
+from . import elementparser as ep
 
 import sys
 from collections import namedtuple

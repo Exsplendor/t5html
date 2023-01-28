@@ -1,4 +1,4 @@
-from t5htmllib.lineparser import *
+from t5html.lineparser import *
 
 import pytest
 from textwrap import dedent

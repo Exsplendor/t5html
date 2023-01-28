@@ -6,7 +6,7 @@ USAGE:
 
     t5html filename
 """
-from t5htmllib import make_html
+from . import make_html
 
 import sys
 
