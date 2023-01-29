@@ -10,7 +10,7 @@ AUTHOR := meta name=author content=splendor
 OG_PROPERTY := meta property=og:title content=HTML5-Template |
             .. meta property=og:type content=website |
             .. meta property=og.url content=www.example.org |
-            .. meta property=og.description content=Example for t5html |
+            .. meta property=og.description content="Example for t5html" |
             .. meta property=og.image content=noneatm
 FAVICON := link rel=icon href=/favicon.ico |
         .. link rel=icon href=/favicon.svg type=image/svg+xml |

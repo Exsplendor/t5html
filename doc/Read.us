@@ -67,8 +67,6 @@ html > head
 translates into:
 
 ```html
-<!DOCTYPE html>
-<html>
   <head>
     <meta charset="utf-8"/>
     <meta name="description" content="A simple HTML5 Template"/>
@@ -139,4 +137,4 @@ translates into:
 Start with `Read.4dev` in the `doc` directory.
 
 
-[//]: # vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en:
+[//]: # (vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en:)
