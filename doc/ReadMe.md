@@ -138,7 +138,7 @@ translates into:
 | ----------------------------- | :------: | :-----: | :-----: | ------------------------- |
 | Line Continuation ('..')      |     +    |    +    |         | `.. continue previous    `|
 | Comments ('`#`')              |     +    |    +    |         | `# im a comment          `|
-| Inline Indentation ('`><|`')  |     +    |    +    |         | `div > h1 > div > p      `|
+| Inline Indentation ('`>\<|`') |     +    |    +    |         | `div > h1 > div > p      `|
 | untouched literal lines ('!') |     +    |    +    |         | `! <-- html comment -->  `|
 | first word as element-name    |     +    |    +    |         | `first word is the tag   `|
 | id attribute ('`tag#id`')     |     +    |    +    |         | `tag#id -> tag id="id"   `|
