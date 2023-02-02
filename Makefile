@@ -23,7 +23,7 @@ MAKEFLAGS += --no-builtin-rules
 TITLE := t5html
 AUTHOR := splendor
 EMAIL := em.notorp@sirolf.rodnelps
-VERSION := $(shell date +%y.%m.%d)
+VERSION := $(shell date +%y.%W)
 DESC := "Converts text to html. Text muste be in t5html form."
 CVSURL := ""
 TOPIC := "Topic :: Text Processing :: Markup :: HTML"
@@ -142,8 +142,16 @@ dist-clean:
 > @rm -rf dist .pytest_cache
 
 
+MAJOR := $(shell grep 'version = ' pyproject.toml | cut -d\" -f2 | cut -d\. -f1-2 )
+MINOR := $(shell grep 'version = ' pyproject.toml | cut -d\" -f2 | cut -d\. -f3 )
+ifeq (${MAJOR}, $(shell date +%y.%W))
+    VERSION := ${MAJOR}.$(shell expr ${MINOR} + 1 )
+else
+    VERSION := ${VERSION}.0
+endif
 version-bump:
-> sed -i "s/version = .*/version = \"${VERSION}\"/" ${CFGFILE}
+> @sed -i "s/version = .*/version = \"${VERSION}\"/" ${CFGFILE}
+> @echo bumped to Version: ${VERSION}
 
 
 publish: build

@@ -89,9 +89,6 @@ def readfile(fpath):
         return raw
 
 
-
-
-
 if __name__ == '__main__':
     print("This file is meant to be imported, not to be executed.")
 
