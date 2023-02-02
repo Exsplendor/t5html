@@ -17,7 +17,7 @@ Trivial HTML (T5HTML) file.
 ## Disclaimers
 
 This **Read.Me** is a link to doc/Read.us!
-For **licensing** look at meta/license.
+The **License** is in meta/license.
 
 
 ## Example
@@ -77,7 +77,7 @@ translates into:
     <meta property="og:title" content="HTML5-Template"/>
     <meta property="og:type" content="website"/>
     <meta property="og.url" content="www.example.org"/>
-    <meta property="og.description" content="Example" for t5html/>
+    <meta property="og.description" content="Example for t5html"/>
     <meta property="og.image" content="noneatm"/>
     <link rel="stylesheet" href="css/styles.css?v=23.1"/>
     <script src="js/script.js">
@@ -132,9 +132,26 @@ translates into:
 12. A leading `"` double-quote marks a text-node.
 
 
+## Feature-Matrix
+
+| Feature                       | 23.2.2.1 | 23.1b28 |         | Explanation/Example       | 
+| ----------------------------- | :------: | :-----: | :-----: | ------------------------- |
+| Line Continuation ('..')      |     +    |    +    |         | `.. continue previous    `|
+| Comments ('`#`')              |     +    |    +    |         | `# im a comment          `|
+| Inline Indentation ('`><|`')  |     +    |    +    |         | `div > h1 > div > p      `|
+| untouched literal lines ('!') |     +    |    +    |         | `! <-- html comment -->  `|
+| first word as element-name    |     +    |    +    |         | `first word is the tag   `|
+| id attribute ('`tag#id`')     |     +    |    +    |         | `tag#id -> tag id="id"   `|
+| class attribute ('`tag.id`')  |     +    |    +    |         | `tag.cls -> tag class="" `|
+| text-nodes (`' " '`)          |     +    |    +    |         | `p > "text -> <p>text</p>`|
+| Macro Expansion (' := ')      |     +    |    +    |         | `MACRONAME := expansion  `|
+| non recursive macro expansion |     +    |         |         |`macroname only once per line expanded`|
+| Macro Imports ('@ . from .')  |     +    |         |         | `@ filename from ./dir   `|
+ 
+ 
 ## For Developers
 
 Start with `Read.4dev` in the `doc` directory.
 
 
-[//]: # (vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en:)
+[//]: # ( vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en: )
