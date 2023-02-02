@@ -6,7 +6,7 @@ USAGE:
 
     t5html filename
 """
-from . import make_html
+from . import readfile, make_html
 
 import sys
 
@@ -43,8 +43,9 @@ def start():
         fname = sys.argv[1]
     else:
         exit(__doc__ + "\n\nERROR: Seems like we didn't get a filename")
-    with open(fname) as f:
-        input = f.read()
+
+
+    input = readfile(fname)
     print(make_html(input))
 
 

@@ -16,7 +16,7 @@ def test_Tree_from_exception_on_wrong_input_type(src, expected):
 
 @pytest.mark.parametrize("src, expected",
         [(pseudoAST_from([LineStructure(0, '!! TEST', 'verbatim')]), list),
-         (pseudoAST_from([LineStructure(0, '!! TEST', 'verbatim')])[0], TreeElement)])
+         (pseudoAST_from([LineStructure(1, '!! TEST', 'verbatim')])[0], TreeElement)])
 def test_pseudoAST_exception_on_correct_input(src, expected):
     assert type(src) == expected
 
@@ -29,5 +29,8 @@ def test_pseudoAST_simple_t5html_input():
 def test_html_from_t5html():
     data = 'html > head | body > div#main.imp.test > p > "some text'
     assert '  </body>' in HTML_from_t5html(data) 
+
+def test_src():
+    pass
 
 # vi: set et ts=4 ts=4 ai cc=78 :

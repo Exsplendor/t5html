@@ -21,6 +21,9 @@ Example:
         " text-node
 
 """
+from . import importer as imp
+
+
 from collections import namedtuple, OrderedDict
 import re
 
@@ -33,14 +36,6 @@ import re
 
 RawLine = namedtuple('RawLine', 'nr line')
 LineStructure = namedtuple('LineStructure', 'nr line cls')
-
-
-# read lines
-# remove comments and empty lines
-# extract macro and import lines
-# ignore verbatim lines
-# expand macros (therefore macros could contain reformating symbols)
-# concatenate/split inline > < and | smybols
 
 
 def get_indent_level(line):
@@ -65,6 +60,14 @@ def RawLines_from_str(text):
     rls = [RawLine(n, l.rstrip())
             for n, l in enumerate(text.splitlines())]
     return rls
+
+def RawLines_from_file(fpath):
+    """
+    takes a file-path as a string
+    returns a RawLinesStructure
+    """
+    text = imp.readfile(fpath)
+    return RawLines_from_str(text)
 
 
 def LineStructures_from_RawLines(rls):
@@ -161,17 +164,28 @@ def Imports_from_LineStructures(cls):
     return imports
 
 
-def expand_macros(cls, macros):
+def expand_macros(cls, macros, visited={}):
     """
     takes LineStructures
     returns LineStructures, but without macros.
+
     """
+    # This function is somewhat messy.
+    # we hold the visited-dictionary to prevent recursive macro-expansion.
+    # basically we go over every line and check every macro if its in the
+    # line and the macro hasnt already be expanded in that line.
+    #
     macro_free = []
     for ls in cls:          # ls = line structure (nr, line, cls)
         line = ls.line
         for m in macros:
             if m in line:
-                line = ls.line.replace(m, macros[m])
+                lines_visited = visited.get(m, [])
+                if not lines_visited or not ls.nr in lines_visited:
+                    line = ls.line.replace(m, macros[m])
+                    lines_visited.append(ls.nr)
+                    visited[m] = lines_visited
+            
                 
         macro_free.append(LineStructure(ls.nr, line, ls.cls))
         
@@ -238,6 +252,33 @@ def split_fold(linestr, foldseq):
     return folded
 
 
+def import_files(imports):
+    """
+    takes a list of pathnames
+    returns a list of structured lines
+    """
+    files = imp.existing_imports(imp.list_of_imports(imports))
+
+    all_lines = []
+    for f in files:
+        raw = RawLines_from_file(f)
+        lines = [l for l in normalize_input(raw) if l.cls == 'macro']
+        all_lines += lines
+    return all_lines
+
+
+
+def normalize_input(raw):
+    """
+    takes a raw t5html fromatted text as a string
+    returns a list of Linestructures
+    """
+    lines = LineStructures_from_RawLines(raw)
+    lines = sanitized_LineStructures(lines)
+    lines = concatenate_lines(lines)
+    return lines
+
+
 def parse_str(t5html):
     """
     takes a raw string formatted as t5html-text
@@ -245,12 +286,14 @@ def parse_str(t5html):
         to html
     """
     raw = RawLines_from_str(t5html)
-    lines = LineStructures_from_RawLines(raw)
-    lines = sanitized_LineStructures(lines)
-    lines = concatenate_lines(lines)
+    lines = normalize_input(raw)
+
     macros, lines = split_macros(lines)
     imports, lines = split_imports(lines)
-    macrodef = MacroDef_from_LineStructures(macros)
+
+    ilines = import_files(imports)
+    macrodef = MacroDef_from_LineStructures(ilines + macros)
+
     lines = expand_macros(lines, macrodef)
     lines = fold_lines(lines)
     # BUG: 2nd expansion needed because of a folding/macro issue

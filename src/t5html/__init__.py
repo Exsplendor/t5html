@@ -13,3 +13,4 @@ Example:
 
 """
 from .treebuilder import HTML_from_t5html as make_html
+from .importer import readfile

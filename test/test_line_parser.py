@@ -199,4 +199,4 @@ class TestSanitizedLineParsing:
 
 
 
-# vi: set et ts=4 ts=4 ai cc=78 nowrap rnu so=5:
+# vi: set et ts=4 ts=4 ai cc=78 nowrap nu rnu so=5:
