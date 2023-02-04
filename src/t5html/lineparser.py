@@ -7,9 +7,9 @@ Example:
 
     Start of line symbols:
 
-        # comment
-        ! verbatim line
-        @ import file
+        ## comment
+        !! verbatim line
+        @@ import file
         MACRONAME := macro definition / text
         .. line continuation
     

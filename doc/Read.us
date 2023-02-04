@@ -145,7 +145,7 @@ translates into:
 | class attribute ('`tag.id`')  |     +    |    +    |         | `tag.cls -> tag class="" `|
 | text-nodes (`' " '`)          |     +    |    +    |         | `p > "text -> <p>text</p>`|
 | Macro Expansion (' := ')      |     +    |    +    |         | `MACRONAME := expansion  `|
-| non recursive macro expansion |     +    |         |         |`macroname only once per line expanded`|
+| non recursive macro expansion |     +    |         |         |`macroname expanded only once per line`|
 | Macro Imports ('@ . from .')  |     +    |         |         | `@ filename from ./dir   `|
  
  
