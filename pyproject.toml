@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "t5html"
-version = "23.05.0"
+version = "23.05.1"
 authors = [
   { name="splendor", email="splendor@tuta.io" },
 ]
