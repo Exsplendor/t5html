@@ -14,12 +14,6 @@ Trivial HTML (T5HTML) file.
 
 ---
 
-## Disclaimers
-
-This **Read.Me** is a link to doc/Read.us!
-The **License** is in meta/license.
-
-
 ## Example
 
 ```t5html
@@ -100,13 +94,12 @@ translates into:
 
 ## t5html-Syntax
 
-1. Every line is processed separatly
+1. Every line stand on its own as a syntactic element, except ...
 
-2. except if a line is the continuation of a previous one, signified by a
+2. .. if a line is the continuation of a previous one, signified by a
    leading `..`
 
-3. Whitespaces are important! Don't ignore them, they separate syntactic
-   elements.
+3. Spaces are important! They delimit words as syntactic elements.
 
 4. Indentation matters! Every indentation marks a hierarchical step down!
 
@@ -152,6 +145,12 @@ translates into:
 ## For Developers
 
 Start with `Read.4dev` in the `doc` directory.
+
+
+## Disclaimers
+
+This **Read.Me** is a link to doc/Read.us!
+The **License** is in meta/license.
 
 
 [//]: # ( vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en: )
