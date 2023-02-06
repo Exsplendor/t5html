@@ -42,6 +42,9 @@ def start():
     if len(sys.argv) == 2:
         fname = sys.argv[1]
     else:
+        from . import VERSION
+        title = f"T5HTML v({VERSION})"
+        print(title)
         exit(__doc__ + "\n\nERROR: Seems like we didn't get a filename")
 
 

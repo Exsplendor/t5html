@@ -28,6 +28,7 @@ DESC := "Converts text to html. Text muste be in t5html form."
 CVSURL := ""
 TOPIC := "Topic :: Text Processing :: Markup :: HTML"
 CFGFILE := pyproject.toml
+PYINIT_FILE := src/t5html/__init__.py
 
 define HELP
 
@@ -151,6 +152,8 @@ else
 endif
 version-bump:
 > @sed -i "s/version = .*/version = \"${VERSION}\"/" ${CFGFILE}
+> @sed -i "s/VERSION = .*/VERSION = \"${VERSION}\"/" ${PYINIT_FILE}
+> @echo ${VERSION} > meta/VERSION
 > @echo bumped to Version: ${VERSION}
 
 
