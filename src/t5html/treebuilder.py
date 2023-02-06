@@ -72,7 +72,7 @@ def html_tree_from_ast(ast):
         line = element.value.strip('"').strip('!') if not element.tag else element.value
         level = element.level
         if peek:
-            if peek.level > element.level:
+            if peek.level > element.level and element.tag and element.tag:
                 # normal tag
                 tagstack.append(element.tag)
             elif peek.level == element.level and element.tag:
@@ -81,9 +81,10 @@ def html_tree_from_ast(ast):
         tree.append(indentstr(level) + line)
 
         if peek and peek.level < element.level:
-            level = peek.level
-            line = '</' + tagstack.pop() + '>' if tagstack else ''
-            tree.append(indentstr(level) + line)
+            while peek.level < level:
+                level -= 1
+                line = '</' + tagstack.pop() + '>' if tagstack else ''
+                tree.append(indentstr(level) + line)
     else:
         while tagstack:
             line = '</' + tagstack.pop() + '>' if tagstack else ''
