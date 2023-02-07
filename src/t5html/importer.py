@@ -28,7 +28,8 @@ def path_from_import_string(s):
     """
     rm_head = lambda s: s.lstrip().lstrip('@@').lstrip()
     if not 'from' in s:
-        return path.join(IMPLICIT_IMPORT_PATH, rm_head(s))
+        user_local = path.expanduser(IMPLICIT_IMPORT_PATH)
+        return path.join(user_local, rm_head(s))
     fname, rest = rm_head(s).split('from', 1)
     fpath = rest.strip()
     return path.join(fpath, fname.strip())
