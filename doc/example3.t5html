@@ -4,9 +4,8 @@
 
 !! HTML5
 html
-   head > UTF8 | AUTHOR_splendor | FAVICON 
+   head > UTF8 | AUTHOR_splendor | title > "Example Three < FAVICON
       CSS_ href=css/main.css
-      title > "Example Three 
    body
       header
          nav

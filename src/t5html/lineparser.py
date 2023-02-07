@@ -184,7 +184,8 @@ def expand_macros(cls, macros, visited={}):
                 if not lines_visited or not ls.nr in lines_visited:
                     line = ls.line.replace(m, macros[m])
                     lines_visited.append(ls.nr)
-                    visited[m] = lines_visited
+                    if m in line:
+                        visited[m] = lines_visited
             
                 
         macro_free.append(LineStructure(ls.nr, line, ls.cls))
@@ -296,7 +297,10 @@ def parse_str(t5html):
 
     lines = expand_macros(lines, macrodef)
     lines = fold_lines(lines)
-    # BUG: 2nd expansion needed because of a folding/macro issue
+    # ISSUE: 2nd expansion needed because of a folding/macro issue
+    # the problem stems from the fact we allow macros to contain folding and
+    # concatenate symbols: "| < > ..". We would need to clear them before
+    # we allow macro-expansion, but then we couldnt have multiline-macros!
     lines = expand_macros(lines, macrodef)
 
     # reclassify the lines after all the folding and unfolding:

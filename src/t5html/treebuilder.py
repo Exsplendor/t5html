@@ -68,23 +68,24 @@ def html_tree_from_ast(ast):
     indentstr = lambda x: x*2*" "
     tree, tagstack = [], []
     for element, peek in zip_longest(ast, ast[1:], fillvalue=None):
-        # this will cause errors for text-nodes with values like: "! some text 
+        # this can cause errors for text-nodes with values like: "! some text 
         line = element.value.strip('"').strip('!') if not element.tag else element.value
         level = element.level
         if peek:
             if peek.level > element.level and element.tag and element.tag:
                 # normal tag
                 tagstack.append(element.tag)
-            elif peek.level == element.level and element.tag:
+            elif peek.level <= element.level and element.tag:
                 # self-closing tag
                 line = line[:-1] + '/>'
+
         tree.append(indentstr(level) + line)
 
-        if peek and peek.level < element.level:
-            while peek.level < level:
-                level -= 1
-                line = '</' + tagstack.pop() + '>' if tagstack else ''
-                tree.append(indentstr(level) + line)
+        while peek and peek.level < level:
+            # if we are at the end of a bigger nesting, close all parent tags
+            level -= 1
+            line = '</' + tagstack.pop() + '>' if tagstack else ''
+            tree.append(indentstr(level) + line)
     else:
         while tagstack:
             line = '</' + tagstack.pop() + '>' if tagstack else ''
