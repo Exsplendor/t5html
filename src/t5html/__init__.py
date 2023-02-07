@@ -12,7 +12,7 @@ Example:
     html = make_html(t5html)
 
 """
-VERSION = "23.06.0"
+VERSION = "23.06.1"
 
 
 from .treebuilder import HTML_from_t5html as make_html
