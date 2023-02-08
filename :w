@@ -5,7 +5,8 @@
 !! HTML5
 html
    head > UTF8 | AUTHOR_splendor | title > "Example Three < FAVICON
-      CSS_ href=css/main.css
+      DESC_"An Example page for the T5HTML-system"
+      CSS_css/main.css
    body
       header
          nav
