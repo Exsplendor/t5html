@@ -29,7 +29,7 @@ AUTHOR := meta name=author content=splendor
 OG_PROPERTY := meta property=og:title content=HTML5-Template |
             .. meta property=og:type content=website |
             .. meta property=og.url content=www.example.org |
-            .. meta property=og.description content=Example for t5html |
+            .. meta property=og.description content="Example for t5html" |
             .. meta property=og.image content=noneatm
 FAVICON := link rel=icon href=/favicon.ico |
         .. link rel=icon href=/favicon.svg type=image/svg+xml |
@@ -56,11 +56,16 @@ html > head
                .. Trivial Text-Tree To Trivial HTML (ttttthtml or t5html)
                .. format, allows for easy prototyping of web-pages.
 
+
+
+# vi: set et sw=3 ts=3 :
 ```
 
 translates into:
 
 ```html
+<!DOCTYPE html>
+<html>
   <head>
     <meta charset="utf-8"/>
     <meta name="description" content="A simple HTML5 Template"/>
@@ -74,7 +79,7 @@ translates into:
     <meta property="og.description" content="Example for t5html"/>
     <meta property="og.image" content="noneatm"/>
     <link rel="stylesheet" href="css/styles.css?v=23.1"/>
-    <script src="js/script.js">
+    <script src="js/script.js"/>
   </head>
   <body>
     <main>
@@ -127,7 +132,7 @@ translates into:
 
 ## Feature-Matrix
 
-| Feature                       | 23.2.2.1 | 23.1b28 |         | Explanation/Example       | 
+| Feature                       |  23.6.1  | 23.1b28 |         | Explanation/Example       | 
 | ----------------------------- | :------: | :-----: | :-----: | ------------------------- |
 | Line Continuation ('..')      |     +    |    +    |         | `.. continue previous    `|
 | Comments ('`#`')              |     +    |    +    |         | `# im a comment          `|
@@ -151,6 +156,79 @@ Start with `Read.4dev` in the `doc` directory.
 
 This **Read.Me** is a link to doc/Read.us!
 The **License** is in meta/license.
+
+
+## Additional Examples
+
+```t5html
+## t5html
+@@ stdlib.t5i
+
+_SCREEN-500 := "screen AND (max-width:500px)"
+
+
+!! HTML5
+html
+   head > UTF8 | AUTHOR_splendor | DESC_"An Example page for the T5HTML-system" 
+      title > "Example Three 
+      FAVICON
+      MEDIA__SCREEN-500 > !! a { background: white }
+      CSS_css/main.css
+      REFRESH_5
+   body
+      header
+         nav.home > button 
+      main
+      aside
+      footer
+      template
+         div single-attribute other-attribute
+            A_assets/images/home.png > img src=images/home.png
+
+## vi: set et sw=3 ts=3 ai ft=t5html :
+```
+
+will be translated into the following, if the stdlib macros are in
+`$HOME/.local/share/t5html` :
+
+```html
+<!DOCTPYE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="author" content="splendor"/>
+    <meta name="description" content="An Example page for the T5HTML-system"/>
+    <title>
+      Example Three
+    </title>
+    <link rel="icon" href="/favicon.ico"/>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <style type="text/css" media="screen AND (max-width:500px)">
+       a { background: white }
+    </style>
+    <link rel="stylesheet" href="css/main.css"/>
+    <meta http-equiv="refresh" content="5"/>
+  </head>
+  <body>
+    <header>
+      <nav class="home">
+        <button/>
+      </nav>
+    </header>
+    <main/>
+    <aside/>
+    <footer/>
+    <template>
+      <div single-attribute other-attribute>
+        <a href="assets/images/home.png">
+          <img src="images/home.png">
+        </a>
+      </div>
+    </template>
+  </body>
+</html>
+```
 
 
 [//]: # ( vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en: )
