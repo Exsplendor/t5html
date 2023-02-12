@@ -132,7 +132,7 @@ translates into:
 
 ## Feature-Matrix
 
-| Feature                       |  23.6.1  | 23.1b28 |         | Explanation/Example       | 
+| Feature                       |  23.6.2  | 23.1b28 |         | Explanation/Example       | 
 | ----------------------------- | :------: | :-----: | :-----: | ------------------------- |
 | Line Continuation ('..')      |     +    |    +    |         | `.. continue previous    `|
 | Comments ('`#`')              |     +    |    +    |         | `# im a comment          `|
