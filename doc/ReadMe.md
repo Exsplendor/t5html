@@ -10,7 +10,10 @@ Trivial HTML (T5HTML) file.
 
 - [Example](#example)
 - [Syntax Overview](#t5html-syntax)
-- [Developers](#for-developers)
+- [Feature-Matrix](#feature-matrix)
+- [Additional Examples](#additional-examples)
+- [For Developers](#for-developerst)
+- [Disclaimers](#disclaimers)
 
 ---
 
@@ -146,17 +149,6 @@ translates into:
 | non recursive macro expansion |     +    |         |         |`macroname expanded only once per line`|
 | Macro Imports ('@ . from .')  |     +    |         |         | `@ filename from ./dir   `|
  
- 
-## For Developers
-
-Start with `Read.4dev` in the `doc` directory.
-
-
-## Disclaimers
-
-This **Read.Me** is a link to doc/Read.us!
-The **License** is in meta/license.
-
 
 ## Additional Examples
 
@@ -229,6 +221,18 @@ will be translated into the following, if the stdlib macros are in
   </body>
 </html>
 ```
+
+ 
+## For Developers
+
+Start with `Read.4dev` in the `doc` directory.
+
+
+## Disclaimers
+
+This **Read.Me** is a link to doc/Read.us!
+The **License** is in meta/license.
+
 
 
 [//]: # ( vi: set et ts=4 sw=4 ai ft=markdown tw=80 cc=+0 spl=en: )
