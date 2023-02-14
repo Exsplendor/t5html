@@ -60,11 +60,14 @@ def pseudoAST_from(structured_lines):
                 line.nr) for line in structured_lines]
 
 
+
 def html_tree_from_ast(ast):
     """
     takes a (pseudo-)ast
     returns a list of formatted html lines
     """
+    # TODO: refactor, break this function into smaller parts up
+    # TODO: consider handling of curly braces for e.g.: Django templates
     indentstr = lambda x: x*2*" "
     tree, tagstack = [], []
     for element, peek in zip_longest(ast, ast[1:], fillvalue=None):
